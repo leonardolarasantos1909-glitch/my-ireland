@@ -1,6 +1,6 @@
-# my-ireland
+# My Ireland
 Aplicativo pessoal para organização do meu intercâmbio na Irlanda.
-# MY IRELAND — Atualização das configurações iniciais
+# My Ireland — Atualização das configurações iniciais
 
 Atualize o projeto My Ireland com as seguintes configurações oficiais.
 
