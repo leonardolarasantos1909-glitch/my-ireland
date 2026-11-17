@@ -129,3 +129,7 @@ npm run deploy
 ```
 
 Tanto `npm run deploy` quanto `npx wrangler deploy` executam `npm run build` automaticamente pelo campo `build.command` do Wrangler, antes de publicar. A pasta `dist` não precisa existir previamente. Se o painel já tiver um comando de build configurado, ele pode ficar vazio para evitar compilação duplicada. A publicação real requer autenticação e acesso à conta Cloudflare; um dry run não publica o site.
+
+### Endereço público do aplicativo
+
+`workers_dev: true` habilita a URL pública `workers.dev` no próximo deploy. Se o painel mostrar “Nenhuma URL habilitada”, abra **Configurações → Domínios e rotas** (ou a aba **Domínios**) e habilite o endereço **workers.dev**. Use a URL completa exibida pelo Cloudflare; o subdomínio depende da conta. A alteração no GitHub só chega ao Worker após um deploy bem-sucedido.
