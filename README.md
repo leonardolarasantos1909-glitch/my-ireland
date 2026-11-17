@@ -82,3 +82,50 @@ O assistente deverá:
 Implemente essas configurações no código existente, execute os testes pertinentes e apresente os arquivos modificados e os resultados.
 
 Não substitua valores desconhecidos por dados inventados.
+
+---
+
+## Primeira versão implementada
+
+Aplicativo estático em JavaScript com Vite, interface responsiva em pt-BR e armazenamento em IndexedDB no navegador. Inclui dashboard financeiro, edição confirmada das configurações, pesquisa comparativa de cidades e simulação hipotética começando do zero.
+
+Os valores monetários são armazenados em centavos inteiros. O seed inicial é idempotente e preserva configurações existentes. Saldo, data e cidade começam desconhecidos (`null`). As projeções usam apenas saldo confirmado e poupança mensal cadastrada, sem presumir rendimentos, inflação ou câmbio.
+
+**Limites desta versão:** não há login, sincronização ou banco remoto. Os dados pertencem ao navegador e à origem do site; limpar o armazenamento ou mudar de domínio não transfere o planejamento. A seção de planejamento fornece orientações determinísticas locais; não há integração com um modelo de IA. Custos das cidades permanecem a pesquisar.
+
+### Desenvolvimento e validação
+
+Use Node.js 24 LTS e npm:
+
+```sh
+npm ci
+npm run dev
+npm test
+npm run build
+npx wrangler deploy --dry-run
+```
+
+O build gera `dist/`. Os testes cobrem valores exatos, saldo desconhecido versus zero, datas, cálculos, seed idempotente e persistência. Para testar o resultado compilado, execute `npm run preview`.
+
+### Cloudflare Workers — publicação de arquivos estáticos
+
+No painel **Workers Builds**, conecte este repositório e use:
+
+| Configuração | Valor |
+| --- | --- |
+| Branch de produção | `main` |
+| Diretório raiz | raiz do repositório (`/`) |
+| Comando de build | `npm run build` |
+| Comando de deploy | `npx wrangler deploy` |
+| Nome do Worker | `my-ireland` |
+| Node.js | `24` (variável de build `NODE_VERSION`, se necessário) |
+
+O Wrangler lê `wrangler.jsonc`, que publica `./dist` usando Workers Static Assets. Não há um Worker de backend nem campo `main`. Não configure um diretório de Pages: este fluxo usa Workers. As rotas da interface usam fragmentos (`#settings`, por exemplo), sem precisar de fallback de SPA.
+
+Para publicar pelo terminal com autenticação Cloudflare já configurada:
+
+```sh
+npm run deploy
+```
+
+Esse comando compila antes de publicar. `npx wrangler deploy` sozinho pressupõe que `npm run build` já terminou. A publicação real requer autenticação e acesso à conta Cloudflare; um dry run não publica o site.
