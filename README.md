@@ -115,7 +115,7 @@ No painel **Workers Builds**, conecte este repositório e use:
 | --- | --- |
 | Branch de produção | `main` |
 | Diretório raiz | raiz do repositório (`/`) |
-| Comando de build | `npm run build` |
+| Comando de build | Nenhum (o Wrangler executa `npm run build` automaticamente) |
 | Comando de deploy | `npx wrangler deploy` |
 | Nome do Worker | `my-ireland` |
 | Node.js | `24` (variável de build `NODE_VERSION`, se necessário) |
@@ -128,4 +128,4 @@ Para publicar pelo terminal com autenticação Cloudflare já configurada:
 npm run deploy
 ```
 
-Esse comando compila antes de publicar. `npx wrangler deploy` sozinho pressupõe que `npm run build` já terminou. A publicação real requer autenticação e acesso à conta Cloudflare; um dry run não publica o site.
+Tanto `npm run deploy` quanto `npx wrangler deploy` executam `npm run build` automaticamente pelo campo `build.command` do Wrangler, antes de publicar. A pasta `dist` não precisa existir previamente. Se o painel já tiver um comando de build configurado, ele pode ficar vazio para evitar compilação duplicada. A publicação real requer autenticação e acesso à conta Cloudflare; um dry run não publica o site.
