@@ -28,7 +28,7 @@ test('valida datas reais e valores não negativos', () => {
 });
 test('seed idempotente preserva nulos e configurações após reabrir o banco', async () => {
   let db = await openDatabase();
-  assert.deepEqual(await loadSettings(db), defaults);
+  assert.deepEqual(await loadSettings(db), { ...defaults, city: 'Dublin', balance: 0 });
   const changed = { ...defaults, goal: 12345, monthly: 234, balance: 0, city: 'Cork', departure: '2028-02-29' };
   await saveSettings(db, changed);
   db.close();
@@ -39,5 +39,23 @@ test('seed idempotente preserva nulos e configurações após reabrir o banco', 
   assert.deepEqual(await loadSettings(db), changed);
   await saveSettings(db, { ...changed, balance: null, city: null, departure: null });
   assert.equal((await loadSettings(db)).balance, null);
+  db.close();
+});
+
+test('migração de IndexedDB v1 preserva os dados cadastrados', async () => {
+  await new Promise((resolve, reject) => {
+    const request = indexedDB.deleteDatabase('my-ireland');
+    request.onsuccess = resolve;
+    request.onerror = reject;
+  });
+  const existing = { ...defaults, city: 'Galway', balance: 12345 };
+  await new Promise((resolve, reject) => {
+    const request = indexedDB.open('my-ireland', 1);
+    request.onupgradeneeded = () => request.result.createObjectStore('settings').put(existing, 'personal');
+    request.onsuccess = () => { request.result.close(); resolve(); };
+    request.onerror = reject;
+  });
+  const db = await openDatabase();
+  assert.deepEqual(await loadSettings(db), existing);
   db.close();
 });

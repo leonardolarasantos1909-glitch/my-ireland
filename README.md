@@ -85,13 +85,13 @@ Não substitua valores desconhecidos por dados inventados.
 
 ---
 
-## Primeira versão implementada
+## Versão atual
 
-Aplicativo estático em JavaScript com Vite, interface responsiva em pt-BR e armazenamento em IndexedDB no navegador. Inclui dashboard financeiro, edição confirmada das configurações, pesquisa comparativa de cidades e simulação hipotética começando do zero.
+O aplicativo usa Vite e IndexedDB. Novas instalações começam com Dublin como destino e saldo inicial zero nas duas metas. A atualização do banco preserva as configurações cadastradas, incluindo saldos desconhecidos e cidades editadas. Os R$ 300 de poupança mensal existentes servem à simulação opcional. O registro de depósitos é livre.
 
-Os valores monetários são armazenados em centavos inteiros. O seed inicial é idempotente e preserva configurações existentes. Saldo, data e cidade começam desconhecidos (`null`). As projeções usam apenas saldo confirmado e poupança mensal cadastrada, sem presumir rendimentos, inflação ou câmbio.
+As movimentações são armazenadas em centavos inteiros e contabilizadas na moeda da meta escolhida. A referência pessoal de R$ 60 mil e a reserva da ELI Schools são independentes. O gráfico de câmbio consulta Frankfurter no navegador. As taxas de referência são publicadas em dias úteis e podem ser diferentes da taxa cobrada para comprar euros.
 
-**Limites desta versão:** não há login, sincronização ou banco remoto. Os dados pertencem ao navegador e à origem do site; limpar o armazenamento ou mudar de domínio não transfere o planejamento. A seção de planejamento fornece orientações determinísticas locais; não há integração com um modelo de IA. Custos das cidades permanecem a pesquisar.
+Movimentações, doadores, checklists e documentos ficam no navegador e na origem do site. Em Configurações, exporte o backup JSON completo com os anexos e restaure-o em um navegador sem planejamento cadastrado. O backup contém dados pessoais e deve ser guardado em um local privado. Não há sincronização automática nem armazenamento de documentos no Worker.
 
 ### Desenvolvimento e validação
 
@@ -120,7 +120,7 @@ No painel **Workers Builds**, conecte este repositório e use:
 | Nome do Worker | `my-ireland` |
 | Node.js | `24` (variável de build `NODE_VERSION`, se necessário) |
 
-O Wrangler lê `wrangler.jsonc`, que publica `./dist` usando Workers Static Assets. Não há um Worker de backend nem campo `main`. Não configure um diretório de Pages: este fluxo usa Workers. As rotas da interface usam fragmentos (`#settings`, por exemplo), sem precisar de fallback de SPA.
+O Wrangler lê `wrangler.jsonc`, publica `./dist` usando Workers Static Assets e executa `worker/index.js` antes de servir os arquivos ou a rota `/api/assistant`. Configure `APP_ACCESS_TOKEN` no Worker para liberar o acesso privado às páginas. O navegador solicitará o usuário `my-ireland` e o código pessoal como senha. Configure o projeto em Workers. As rotas da interface usam fragmentos, como `#settings`.
 
 Para publicar pelo terminal com autenticação Cloudflare já configurada:
 
@@ -133,3 +133,17 @@ Tanto `npm run deploy` quanto `npx wrangler deploy` executam `npm run build` aut
 ### Endereço público do aplicativo
 
 `workers_dev: true` habilita a URL pública `workers.dev` no próximo deploy. Se o painel mostrar “Nenhuma URL habilitada”, abra **Configurações → Domínios e rotas** (ou a aba **Domínios**) e habilite o endereço **workers.dev**. Use a URL completa exibida pelo Cloudflare; o subdomínio depende da conta. A alteração no GitHub só chega ao Worker após um deploy bem-sucedido.
+
+
+### Assistente opcional
+
+A IA fica desativada enquanto os segredos do Worker estiverem ausentes. A API da OpenAI pode gerar custos por requisição. Depois de revisar o custo e as políticas de dados do provedor, configure os segredos no painel do Worker ou via Wrangler autenticado:
+
+```sh
+npx wrangler secret put OPENAI_API_KEY
+npx wrangler secret put APP_ACCESS_TOKEN
+```
+
+Gere um código pessoal aleatório de 32 a 256 caracteres ASCII imprimíveis sem espaços para `APP_ACCESS_TOKEN` e informe-o na tela do assistente quando for usá-lo. A chave da OpenAI permanece no backend. `OPENAI_MODEL` é uma variável opcional do Worker, com valor padrão `gpt-4.1-mini`. O Worker usa a Responses API com armazenamento da resposta desabilitado. Consulte os termos de retenção do provedor antes de compartilhar informações pessoais.
+
+`npm run dev` serve a interface. Para testar o endpoint local, execute `npx wrangler dev` com credenciais de teste em um arquivo `.dev.vars` ignorado pelo Git. O assistente só recebe a pergunta, os dados escolhidos para a solicitação e o contexto agregado quando você marca essa opção. Ele não altera registros nem envia mensagens. Para links do YouTube sem texto, o Worker pode consultar título e autoria; para analisar conteúdo, informe descrição, resumo ou transcrição autorizada. Instagram e outros sites usam o texto fornecido pelo usuário.

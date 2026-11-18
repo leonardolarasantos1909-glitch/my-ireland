@@ -2,3 +2,42 @@
 @media(min-width:1500px){.hero{min-height:330px}.hero h2{font-size:39px}.stats .card{padding:28px}}
 @media(max-width:1100px){aside{width:205px;padding:25px 15px}.brand{font-size:22px}main{margin-left:205px}.content{padding:28px 25px}header{padding:0 25px}.heading{align-items:flex-start}.heading h1{font-size:24px}.heading>.button{font-size:10px;gap:8px}.hero h2{font-size:29px}.card{padding:18px}.stats{gap:10px}.card h3{font-size:21px}.card h3.unknown{font-size:16px}.city-grid{gap:10px}}
 @media(max-width:760px){aside{position:static;width:100%;padding:15px 18px;border-right:0;border-bottom:1px solid #e4e9e3}.brand{font-size:24px}.brand-mark{font-size:30px}.nav-label,.sidebar-note,.profile{display:none}nav{display:flex;gap:4px;overflow:auto;margin-top:12px}nav a{padding:10px 9px;font-size:10px;white-space:nowrap;gap:5px}nav a span{font-size:15px;width:auto}main{margin-left:0}header{height:55px;padding:0 20px;font-size:8px}.private{font-size:8px;padding:6px 8px}.content{padding:25px 18px}.heading{flex-direction:column;gap:16px}.heading h1{font-size:26px}.heading p{font-size:12px}.hero{padding:26px 24px;min-height:310px}.hero h2{font-size:28px}.hero{display:block;padding-bottom:0}.hero>div:first-child{max-width:100%;padding-right:0}.cover-art{position:relative;width:calc(100% + 48px);height:auto;aspect-ratio:3/2;margin:24px -24px 0}.cover-art img{height:auto}.hero p{color:#e1e7d6}.stats{grid-template-columns:1fr}.stats .card{position:relative;padding:20px 20px 20px 72px}.stats .stat-icon{position:absolute;left:20px;top:24px}.stats p{margin-top:0}.stats h3,.stats h3.unknown{font-size:23px}.lower-grid,.form-grid,.city-grid{grid-template-columns:1fr}.section-title>span{font-size:9px}.planning-banner{padding:18px 15px}footer{flex-direction:column;line-height:1.8}.city-art{height:110px}.form-card{padding:22px}.startup-error{margin:0}.guide p{font-size:13px}}
+
+/* Planning modules */
+aside { overflow-y: auto; }
+nav a { padding-block: 11px; }
+.sidebar-note { margin-top: 24px; }
+.block { margin-top: 20px; }
+.card h2 { font-size: 18px; margin: 0 0 12px; }
+.card p, .card small, .card a { font-size: 13px; }
+.card p, p { color: #586b5f; }
+.card > .button, form > .button { margin-top: 14px; }
+.card label + label { margin-top: 12px; }
+.form-grid label + label { margin-top: 0; }
+input, select, textarea { min-width: 0; }
+select, textarea { width: 100%; border: 1px solid #cddacc; border-radius: 7px; padding: 11px; background: #fcfdfb; color: #2b4637; font: inherit; }
+textarea { min-height: 96px; resize: vertical; }
+button:not(.button) { border: 1px solid #cddacc; border-radius: 7px; color: #264b39; background: #f4f7ee; padding: 8px 11px; font: inherit; font-size: 12px; }
+button[aria-pressed="true"] { background: #245b44; border-color: #245b44; color: white; }
+.actions { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; }
+.records, .summary, .checklist { list-style: none; padding: 0; margin: 12px 0; }
+.records li { display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 12px; border-top: 1px solid #e4eadf; padding: 13px 0; overflow-wrap: anywhere; }
+.records li p { margin: 4px 0; }
+.records a { display: inline-block; margin-right: 10px; }
+.summary li, .checklist li { padding-block: 6px; font-size: 13px; }
+.checklist label, .inline { flex-direction: row; align-items: center; }
+input[type="checkbox"] { width: 18px; height: 18px; flex: 0 0 auto; }
+progress { width: 100%; height: 12px; accent-color: #28664a; }
+dd { margin: 0 0 12px; font-weight: 600; }
+dt, output { font-size: 13px; }
+.exchange svg { display: block; width: 100%; color: #347458; margin: 13px 0 0; }
+.exchange circle { cursor: pointer; }
+.exchange input[type="range"] { padding: 0; accent-color: #347458; }
+[data-ai-result] { white-space: pre-wrap; overflow-wrap: anywhere; background: #f0f5ed; padding: 15px; }
+@media (max-width: 760px) {
+  nav { flex-wrap: wrap; overflow: visible; }
+  nav a { min-height: 40px; }
+  input, select, textarea { font-size: 16px; }
+  button:not(.button) { min-height: 40px; }
+  .lower-grid > *, .form-grid > * { min-width: 0; }
+}
