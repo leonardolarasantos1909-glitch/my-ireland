@@ -2,17 +2,22 @@ import { dateLabel, escape, goalNames, money, schoolGoal, today, totals } from '
 
 export function goalCards(plan, settings) {
   const sums = totals(plan.entries, settings.balance);
-  return '<div class="lower-grid">' + Object.entries(goalNames).map(([id, name]) => {
+  return '<div class="lower-grid goal-grid">' + Object.entries(goalNames).map(([id, name]) => {
     const currency = id === 'proof' ? 'BRL' : 'EUR';
     const goal = id === 'proof' ? settings.goal : schoolGoal;
     const { balance, own, donation, withdrawals, months } = sums[id];
     const unknown = id === 'proof' && settings.balance === null;
     const progress = goal ? Math.min(100, Math.floor(balance * 100 / goal)) : 100;
     const deposits = own + donation;
-    return `<article class="card"><h2>${name}</h2><h3>${unknown ? 'Saldo registrado: ' : ''}${money(balance, currency)}</h3>
-      <p>Meta ${money(goal, currency)} · ${unknown ? 'Saldo anterior desconhecido' : 'Faltam ' + money(Math.max(0, goal - balance), currency)}</p>
+    return `<article class="card goal-card">
+      <div class="goal-heading"><h2>${name}</h2><span class="currency-chip">${currency}</span></div>
+      <dl class="goal-values">
+        <div><dt>${unknown ? 'Saldo registrado' : 'Total economizado'}</dt><dd>${money(balance, currency)}</dd></div>
+        <div><dt>Meta</dt><dd>${money(goal, currency)}</dd></div>
+      </dl>
+      <div class="goal-progress"><span>${unknown ? 'Saldo anterior desconhecido' : 'Faltam ' + money(Math.max(0, goal - balance), currency)}</span><strong>${progress}%</strong></div>
       <progress aria-label="Progresso registrado de ${name}" max="100" value="${progress}"></progress>
-      <p>${progress}% · Recursos próprios ${money(own, currency)} · Doações ${money(donation, currency)}</p>
+      <p>Recursos próprios ${money(own, currency)} · Doações ${money(donation, currency)}</p>
       <p>Entradas acumuladas ${money(deposits, currency)} · Retiradas ${money(withdrawals, currency)}</p>
       <p>${months.size ? 'Média de entradas por mês com atividade ' + money(Math.round(deposits / months.size), currency) : 'Sem média histórica disponível.'}</p>
       ${id === 'proof' ? '<small>Os recursos desta meta são exclusivos para comprovação financeira.</small>' : '<small>Reserva adicional para quitar o saldo contratual em uma única vez.</small>'}</article>`;
