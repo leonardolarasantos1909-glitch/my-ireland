@@ -27,7 +27,7 @@ function render() {
 function dashboard() {
   const days = daysUntil(settings.departure);
   return `<section class="heading"><div><h1>Meu intercâmbio</h1><p>${escape(settings.city || 'Destino a confirmar')}, Irlanda · ${trip.school} · ${trip.agency}</p></div><a class="button secondary" href="#settings">Personalizar plano</a></section>
-  <section class="hero"><div><span class="tag">BRASIL → IRLANDA</span><h2>${trip.period}</h2><p>${trip.course}<br>25 semanas de General English e 2 meses de férias.<br>${settings.departure ? 'Embarque em ' + settings.departure.split('-').reverse().join('/') + (days > 0 ? ' · Faltam ' + days + ' dias' : '') : 'Data exata de embarque indefinida.'}<br>Passagem aérea como presente da minha mãe, sem despesa própria prevista.</p><a class="button light" href="#documents">Ver meu contrato ↗</a></div><div class="cover-art"><img src="/capa.png" alt="Harpa dourada alada sobre fundo verde" width="660" height="440" fetchpriority="high"></div></section>
+  <section class="hero"><div><span class="tag">BRASIL → IRLANDA</span><h2>${trip.period}</h2><p>${trip.course}<br>25 semanas de General English e 2 meses de férias.<br>${settings.departure ? 'Embarque em ' + settings.departure.split('-').reverse().join('/') + (days > 0 ? ' · Faltam ' + days + ' dias' : '') : 'Data exata de embarque indefinida.'}<br>Passagem aérea como presente da minha mãe, sem despesa própria prevista.</p><a class="button light" href="#documents">Ver meu contrato ↗</a></div></section>
   ${workspace.dashboard(settings)}`;
 }
 function settingsPage() {
