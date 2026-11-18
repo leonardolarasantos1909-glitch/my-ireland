@@ -55,27 +55,34 @@ test('endpoint de IA exige configuração e origem local antes de contatar o pro
   assert.equal(fetch.mock.calls.length, 0);
 });
 
-test('site publicado exige acesso pessoal antes de servir arquivos', async () => {
-  const request = new Request('https://my-ireland.example/assets/bundle.js');
-  const ASSETS = { fetch: () => { throw new Error('Asset privado não deve ser servido'); } };
-  assert.equal((await worker.fetch(request, { ASSETS })).status, 503);
+test('páginas e arquivos estão disponíveis sem código ou credenciais', async () => {
+  for (const path of ['/', '/assets/bundle.js']) {
+    const request = new Request('https://my-ireland.example' + path);
+    const response = await worker.fetch(request, {
+      ASSETS: { fetch: assetRequest => {
+        assert.equal(new URL(assetRequest.url).pathname, path);
+        assert.equal(assetRequest.headers.get('Authorization'), null);
+        return new Response('Arquivo do aplicativo');
+      } }
+    });
+    assert.equal(response.status, 200);
+    assert.equal(response.headers.get('WWW-Authenticate'), null);
+    assert.equal(await response.text(), 'Arquivo do aplicativo');
+  }
+});
+
+test('assistente configurado rejeita chamadas sem código ou com código incorreto', async t => {
+  const fetch = t.mock.method(globalThis, 'fetch', async () => { throw new Error('Chamada inesperada'); });
   const original = Object.getOwnPropertyDescriptor(crypto.subtle, 'timingSafeEqual');
   Object.defineProperty(crypto.subtle, 'timingSafeEqual', { configurable: true, value: (a, b) => Buffer.from(a).equals(Buffer.from(b)) });
   try {
-    const secret = 'a'.repeat(32);
-    const guarded = await worker.fetch(request, { ASSETS, APP_ACCESS_TOKEN: secret });
-    assert.equal(guarded.status, 401);
-    assert.match(guarded.headers.get('WWW-Authenticate'), /Basic/);
-    const authorized = new Request(request, { headers: { Authorization: 'Basic ' + btoa('my-ireland:' + secret) } });
-    const response = await worker.fetch(authorized, {
-      APP_ACCESS_TOKEN: secret,
-      ASSETS: { fetch: assetRequest => {
-        assert.equal(assetRequest.headers.get('Authorization'), null);
-        return new Response('Asset privado');
-      } }
-    });
-    assert.equal(response.headers.get('Cache-Control'), 'private, no-store');
-    assert.equal(await response.text(), 'Asset privado');
+    const origin = 'https://my-ireland.example';
+    const env = { APP_ACCESS_TOKEN: 'a'.repeat(32), OPENAI_API_KEY: 'chave-simulada-para-teste' };
+    for (const headers of [{ Origin: origin }, { Origin: origin, Authorization: 'Bearer incorreto' }]) {
+      const response = await worker.fetch(new Request(origin + '/api/assistant', { method: 'POST', headers }), env);
+      assert.equal(response.status, 401);
+    }
+    assert.equal(fetch.mock.calls.length, 0);
   } finally {
     if (original) Object.defineProperty(crypto.subtle, 'timingSafeEqual', original);
     else delete crypto.subtle.timingSafeEqual;

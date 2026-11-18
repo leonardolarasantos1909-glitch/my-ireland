@@ -120,7 +120,7 @@ No painel **Workers Builds**, conecte este repositório e use:
 | Nome do Worker | `my-ireland` |
 | Node.js | `24` (variável de build `NODE_VERSION`, se necessário) |
 
-O Wrangler lê `wrangler.jsonc`, publica `./dist` usando Workers Static Assets e executa `worker/index.js` antes de servir os arquivos ou a rota `/api/assistant`. Configure `APP_ACCESS_TOKEN` no Worker para liberar o acesso privado às páginas. O navegador solicitará o usuário `my-ireland` e o código pessoal como senha. Configure o projeto em Workers. As rotas da interface usam fragmentos, como `#settings`.
+O Wrangler lê `wrangler.jsonc`, publica `./dist` usando Workers Static Assets e executa `worker/index.js` para as requisições em `/api/*`. O endereço do aplicativo abre diretamente. O conteúdo padrão incluído no código pode ser acessado por quem tiver o endereço. Os registros e documentos salvos pelo usuário permanecem no IndexedDB do navegador. Configure o projeto em Workers. As rotas da interface usam fragmentos, como `#settings`.
 
 Para publicar pelo terminal com autenticação Cloudflare já configurada:
 
@@ -144,6 +144,6 @@ npx wrangler secret put OPENAI_API_KEY
 npx wrangler secret put APP_ACCESS_TOKEN
 ```
 
-Gere um código pessoal aleatório de 32 a 256 caracteres ASCII imprimíveis sem espaços para `APP_ACCESS_TOKEN` e informe-o na tela do assistente quando for usá-lo. A chave da OpenAI permanece no backend. `OPENAI_MODEL` é uma variável opcional do Worker, com valor padrão `gpt-4.1-mini`. O Worker usa a Responses API com armazenamento da resposta desabilitado. Consulte os termos de retenção do provedor antes de compartilhar informações pessoais.
+Gere um código pessoal aleatório de 32 a 256 caracteres ASCII imprimíveis sem espaços para `APP_ACCESS_TOKEN` e informe-o apenas na tela do assistente quando for usá-lo. Você pode manter o valor existente no Worker. O código autoriza chamadas à IA. A chave da OpenAI permanece no backend. `OPENAI_MODEL` é uma variável opcional do Worker, com valor padrão `gpt-4.1-mini`. O Worker usa a Responses API com armazenamento da resposta desabilitado. Consulte os termos de retenção do provedor antes de compartilhar informações pessoais.
 
 `npm run dev` serve a interface. Para testar o endpoint local, execute `npx wrangler dev` com credenciais de teste em um arquivo `.dev.vars` ignorado pelo Git. O assistente só recebe a pergunta, os dados escolhidos para a solicitação e o contexto agregado quando você marca essa opção. Ele não altera registros nem envia mensagens. Para links do YouTube sem texto, o Worker pode consultar título e autoria; para analisar conteúdo, informe descrição, resumo ou transcrição autorizada. Instagram e outros sites usam o texto fornecido pelo usuário.

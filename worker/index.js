@@ -16,22 +16,6 @@ async function authorized(provided, expected) {
   return crypto.subtle.timingSafeEqual(a, b);
 }
 
-async function privateAssets(request, env, token) {
-  if (!token) return new Response('Configure o código pessoal de acesso do Worker.', { status: 503, headers: { 'Cache-Control': 'no-store' } });
-  const expected = 'Basic ' + btoa('my-ireland:' + token);
-  if (!(await authorized(request.headers.get('Authorization') ?? '', expected))) {
-    return new Response('Acesso pessoal ao My Ireland.', { status: 401, headers: {
-      'WWW-Authenticate': 'Basic realm="My Ireland", charset="UTF-8"', 'Cache-Control': 'no-store'
-    } });
-  }
-  const headers = new Headers(request.headers);
-  headers.delete('Authorization');
-  const asset = await env.ASSETS.fetch(new Request(request, { headers }));
-  const response = new Response(asset.body, asset);
-  response.headers.set('Cache-Control', 'private, no-store');
-  return response;
-}
-
 async function youtubeMetadata(value) {
   let source;
   try { source = new URL(value); } catch { return ''; }
@@ -53,8 +37,8 @@ async function youtubeMetadata(value) {
 export default {
   async fetch(request, env) {
     const url = new URL(request.url);
+    if (url.pathname !== '/api/assistant') return env.ASSETS.fetch(request);
     const token = /^[!-~]{32,256}$/.test(env.APP_ACCESS_TOKEN ?? '') ? env.APP_ACCESS_TOKEN : null;
-    if (url.pathname !== '/api/assistant') return privateAssets(request, env, token);
     if (request.method !== 'POST') return json({ error: 'Método não permitido.' }, 405);
     if (request.headers.get('Origin') !== url.origin) return json({ error: 'Origem inválida.' }, 403);
     if (!env.OPENAI_API_KEY || !token) {

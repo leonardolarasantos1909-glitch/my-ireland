@@ -94,7 +94,7 @@ export async function createWorkspace(db, mount, currentSettings, render) {
     return `<section class="heading"><div><h1>Assistente My Ireland</h1><p>Planeje tarefas, viagens e agradecimentos.</p></div></section>
       <form class="card" data-form="assistant"><h2>${assistantLink ? 'Analisar ' + escape(assistantLink.title) : donor ? 'Preparar agradecimento para ' + escape(donor) : 'Enviar uma pergunta'}</h2>
       <p>Ao enviar, o serviço de IA recebe a pergunta${assistantLink ? ', o link e o texto salvo' : donor ? ' e o nome do doador' : ''}, além do contexto financeiro se você optar por incluí-lo. Arquivos e histórico de movimentações ficam no navegador.</p>
-      <label>Código pessoal de acesso<input name="token" type="password" required autocomplete="off"></label>
+      <label>Código de acesso do assistente<input name="token" type="password" required autocomplete="off"></label>
       <label>Solicitação<textarea name="prompt" maxlength="2000" required>${assistantLink ? 'Sugira itens de checklist sustentados pelo conteúdo informado. Use uma linha por item.' : donor ? 'Redija uma mensagem de agradecimento pessoal e breve, sem mencionar valores nem supor detalhes.' : ''}</textarea></label>
       <label class="inline"><input name="context" type="checkbox"> Incluir destino, contrato e saldos agregados no contexto</label>
       <button class="button">Enviar à IA</button><p data-ai-status role="status"></p><pre data-ai-result hidden></pre>
